@@ -3,12 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Tic Tac Toe</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </head>
 
 <body>
-    
+    <div class="container">
+
+        <form id="setup-form">
+            <fieldset>
+                <label for="player1">Player1:</label>
+                <input type="text" id="player1" placeholder="Alicia...">
+
+                <label for="player2">Player2:</label>
+                <input type="text" id="player2" placeholder="Gustave...">
+            </fieldset>
+
+            <button type="submit">Start</button>
+            <button type="button" id="restart-btn">Restart</button> 
+        </form>
+
+        <div id="board">
+            <div data-index="0"></div>
+            <div data-index="1"></div>
+            <div data-index="2"></div>
+            <div data-index="3"></div>
+            <div data-index="4"></div>
+            <div data-index="5"></div>
+            <div data-index="6"></div>
+            <div data-index="7"></div>
+            <div data-index="8"></div>
+        </div>
+
+        <div id="status">
+
+        </div>
+
+    </div>
 </body>
 </html>

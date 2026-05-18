@@ -1,4 +1,4 @@
-// 01 The Gameboard object for storing board array, placing a mark, and returning the current state
+//# 01 The Gameboard object for storing board array, placing a mark, and returning the current state
 const Gameboard = (() => {
     const board = [
         "", "", "", 
@@ -84,32 +84,76 @@ const GameController = (() => {
         Gameboard.placeMarker(index, players[currentPlayerIndex].symbol);
 
         if (checkWinner()) {
-            console.log(`${players[currentPlayerIndex].name} wins!`);
+            DisplayController.updateStatus(`${players[currentPlayerIndex].name} wins!`);
             gameOver = true;
             return;
         }
         if (checkTie()) {
-            console.log("It's a tie!");
+            DisplayController.updateStatus("It's a tie!");
             gameOver = true;
             return;
         }
         switchTurn();
-
+        // Show whose turn it is after switching
+        DisplayController.updateStatus(`${players[currentPlayerIndex].name}'s turn`);
     };
 
     return { startGame, playRound,};
 })() // These parentheses call the function immediately
 
-// Game 1 - Alice wins
-const player1 = createPlayer("Alice", "X");
-const player2 = createPlayer("Bob", "O");
-GameController.startGame(player1, player2);
-GameController.playRound(0); // X
-GameController.playRound(3); // O
-GameController.playRound(1); // X
-GameController.playRound(4); // O
-GameController.playRound(2); // X wins!
+// Display the board on the html
+const DisplayController = (() => {
+    const renderBoard = () => {
+        const board = Gameboard.getBoard();
+        const squares = document.querySelectorAll("#board div");
 
-// Game 2 - test reset works
-GameController.startGame(player1, player2);
-Gameboard.getBoard(); // should show 9 empty strings!
+        squares.forEach((square, index) => {
+            square.textContent = board[index];
+        });
+    };
+
+    const setupClickListeners = () => {
+        const squares = document.querySelectorAll("#board div");
+        squares.forEach((square) => {
+            square.addEventListener("click", (event) => {
+                const index = parseInt(event.target.dataset.index);
+                GameController.playRound(index);
+                renderBoard();
+            });
+        });
+    };
+
+    // Show status message
+    const updateStatus = (message) => {
+        document.getElementById("status").textContent = message;
+    };
+
+    const setupForm = () => {
+        let player1;
+        let player2;
+
+        const form = document.getElementById("setup-form");
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const name1 = document.getElementById("player1").value || "Player 1";
+            const name2 = document.getElementById("player2").value || "Player 2";
+            player1 = createPlayer(name1, "X");
+            player2 = createPlayer(name2, "O");
+            GameController.startGame(player1, player2);
+            renderBoard();
+            updateStatus(`${name1}'s turn`);
+        });
+        // restart button
+        document.getElementById("restart-btn").addEventListener("click", () => {
+            GameController.startGame(player1, player2);
+            renderBoard();
+            updateStatus(`${player1.name}'s turn`);
+        });
+    };
+
+    return { renderBoard, setupClickListeners, updateStatus, setupForm };
+})()
+
+
+DisplayController.setupClickListeners();
+DisplayController.setupForm();
